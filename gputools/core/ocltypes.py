@@ -148,17 +148,22 @@ def _wrap_OCLImage(cls):
         if not arr.ndim in [2,3,4]:
             raise ValueError("dimension of array wrong, should be 1...4 but is %s"%arr.ndim)
         elif arr.ndim == 4:
-            num_channels = arr.shape[-1]
+            num_channels = 4
+            arr_ext = arr
+        elif arr.ndim == 3:
+            num_channels = 4
+            arr_ext = np.dstack((arr, np.ones_like(arr[:,:,0], dtype=np.float32)))
         else:
             num_channels = 1
+            arr_ext = arr
 
         if arr.dtype.type == np.complex64:
             num_channels = 2
-            res =  OCLImage.empty(arr.shape,dtype = np.float32, num_channels=num_channels)
-            res.write_array(arr)
+            res =  OCLImage.empty(arr_ext.shape,dtype = np.float32, num_channels=num_channels)
+            res.write_array(arr_ext)
             res.dtype = np.float32
         else:
-            res =  cl.image_from_array(ctx, prepare(arr),num_channels = num_channels,
+            res =  cl.image_from_array(ctx, prepare(arr_ext),num_channels = num_channels,
                                              *args, **kwargs)
 
             res.dtype = arr.dtype
