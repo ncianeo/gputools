@@ -18,7 +18,7 @@ For that, gputools mostly uses the excellent [pyopencl](https://documen.tician.d
 ### Installation
 
 ```
-pip3 install gputools
+cp gputools <YOUR_WORK_DIRECTORY>
 ```
 check if basic stuff is working:
 
